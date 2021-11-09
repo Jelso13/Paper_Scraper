@@ -25,11 +25,6 @@ class Paper_Spider(scrapy.Spider):
 
     def parse_pdf(self, response):
         # used to check if the pdf contains one of the key_phrases
-        path = response.url.split("/")[-1]
-        self.logger.info("Saving PDF %s", path)
-        with open("papers/" + path, "wb") as f:
-            f.write(response.body)
-
         # IDEA: Maybe use pdfminer instead?
         reader = PyPDF2.PdfFileReader(io.BytesIO(response.body))
         text = u""
@@ -37,6 +32,12 @@ class Paper_Spider(scrapy.Spider):
             text += reader.getDocumentInfo().title
             for page in reader.pages:
                 text += page.extractText()
+
+        path = response.url.split("/")[-1]
+        self.logger.info("Saving PDF %s", path)
+        with open("papers/" + reader.getDocumentInfo().title, "wb") as f:
+            f.write(response.body)
+
         return text
 
 
