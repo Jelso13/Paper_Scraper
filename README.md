@@ -9,13 +9,14 @@ TODO
 - [ ] Handle deeply nested root URL's
 - [ ] Determine papers from other pdf files (supplementary material, etc...)
 - [ ] Add option for custom file name formatting
+- [ ] Improve efficiency to pass over papers that are already collected
 
 # Arguments
 Example 1 shows providing the link argument to direct to a root url and a key phrase to search within pdfs
 ```
-$ python3 --link https://papers.nips.cc/paper/2015 --key_phrase "reinforcement learning"
+$ python3 scraper.py --link https://papers.nips.cc/paper/2015 --key_phrase "reinforcement learning"
 ```
 Example 2 will collect all pdfs regardless of key phrase
 ```
-$ python3 --link https://papers.nips.cc/paper/2015
+$ python3 scraper.py --link https://papers.nips.cc/paper/2015
 ```
