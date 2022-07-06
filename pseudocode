@@ -1,4 +1,4 @@
-#user provides start url, keywords, archive directory,
+#user provides start url, keywords, archive directory(optional),
 
 
 for each url:
@@ -15,3 +15,5 @@ for each url:
             add to json
 
 
+# Write function that determines how many papers there are to download
+# use this function with tqdm to give indication of how long left
