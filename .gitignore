@@ -1,3 +1,4 @@
 Paper_Scraper.code-workspace
 .env/
 papers/
+__pycache__/spiders.cpython-39.pyc

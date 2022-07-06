@@ -57,6 +57,7 @@ import io
 import logging
 from spiders import NeuripsSpider, Paper_Spider
 
+logging.getLogger("scrapy").propagate = False
 
 
 def test_pdf_checker():
@@ -64,13 +65,14 @@ def test_pdf_checker():
     #rl_link = "https://proceedings.neurips.cc/paper/2019/file/02ed812220b0705fabb868ddbf17ea20-Paper.pdf"
     #rl_link = "https://proceedings.neurips.cc/paper/2019/hash/02ed812220b0705fabb868ddbf17ea20-Abstract.html"
     #no_rl_link = "https://proceedings.neurips.cc/paper/2019/hash/02f063c236c7eef66324b432b748d15d-Abstract.html"
-    no_rl_link = "https://proceedings.neurips.cc/paper/2019"
+    no_rl_link = "https://proceedings.neurips.cc/paper/1998"
     #spdr = Paper_Spider
     spdr = NeuripsSpider
     process = CrawlerProcess()
     process.crawl(spdr, url_list=[no_rl_link], phrase_list=["reinforcement learning"])
     time_start = time.time()
     process.start()
+    print("time taken = {:.2f} seconds".format(time.time()-time_start))
 
 
 if __name__ == "__main__":
