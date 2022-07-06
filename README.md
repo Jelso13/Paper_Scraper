@@ -4,6 +4,12 @@ Web Scraper for collecting papers with particular key-words from a specified con
 key_phrase parameter only searches first page of the pdf to reduce the chance of collecting irrelevent papers or not collecting relevent papers.
 
 TODO
+- [ ] Create ICML class
+- [ ] handle parameters and options that are passed to the program
+- [ ] Store paper information in shelving
+- [ ] store papers organised in some way only if not already downloaded
+
+These are the old objectives *update this
 - [ ] Add parameter for save location of papers
 - [X] Save file names by the title of the document
 - [ ] Handle deeply nested root URL's

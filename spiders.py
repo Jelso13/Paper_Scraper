@@ -1,4 +1,5 @@
 import scrapy
+from scrapy.selector import Selector
 import logging
 import PyPDF2
 import io
@@ -8,9 +9,9 @@ file1 = open("log_file.txt", "w")
 
 class Paper_Spider(scrapy.Spider):
     name = "Mr.Spider"
-    custom_settings = {
-        "DEPTH_LIMIT" : 2
-    }
+    #custom_settings = {
+    #    "DEPTH_LIMIT" : 2
+    #}
 
     def __init__(self, url_list, phrase_list, ignore_endings=[".json", ".zip", ".bib", ".pdf"], paper_ending=".pdf"):
         super().__init__()
@@ -27,9 +28,9 @@ class Paper_Spider(scrapy.Spider):
             elif all([not sub_link.endswith(tp) for tp in self.ignore_endings]):
                 yield response.follow(sub_link, callback=self.parse)
 
-    def parse_pdf(self, response):
+    def parse_pdf(self, response, title):
         print("hit in parse pdf")
-        file1.write(response.url+"\n")
+        file1.write(title+"\n\t"+response.url+"\n")
         #print(response.url)
         #print("WOULD WRITE HERE")
         #with open("papers/" + path, "wb") as f:
@@ -85,40 +86,11 @@ class Paper_Spider(scrapy.Spider):
             #print("Did not find keyword")
             return False
 
-    def store_paper_info(self, title, keywords, url, tags=None):
-        with closing(shelve.open("paper_info.shelf")) as shelf:
-            shelf[title] = {
-                "keywords": keywords,
-                "url": url,
-                "tags": []
-            }
 
-#class NeuripsSpider(Paper_Spider):
-#    #settings = {
-#    #    "DEPTH_LIMIT" : 2
-#
-#    #}
-#
-#    def __init__(self, **kwargs):
-#        super().__init__(paper_ending="Paper.pdf", **kwargs)
-#
-#    #def parse(self, response):
-#    #    print("response depth = ", response.meta.get("depth", 0))
-#    #    import random
-#    #    for sub_link in response.xpath("//div//a/@href").extract():
-#    #        #print(str(random.randint(0, 5)), "sublink = ", sub_link)
-#    #        if sub_link.endswith(self.paper_ending):
-#    #            yield response.follow(sub_link, callback=self.parse_pdf)
-#    #        elif all([not sub_link.endswith(tp) for tp in self.ignore_endings]):
-#    #            yield response.follow(sub_link, callback=self.parse)
-
-
-
-#class NeuripsSpider(scrapy.Spider):
 class NeuripsSpider(Paper_Spider):
     name = "NeuripsSpider"
     custom_settings = {
-        "DEPTH_LIMIT" : 1
+        "DEPTH_LIMIT" : 3
     }
     #start_urls = [
     #    "https://proceedings.neurips.cc/paper/1998",
@@ -132,24 +104,17 @@ class NeuripsSpider(Paper_Spider):
         self.paper_ending = paper_ending
 
     def parse(self, response):
-        col_section = response.xpath("//div[@class='col']").extract()
-        #for sub_link in response.xpath("//div//a/@href").extract():
-        for sub_link in response.xpath("//div[@class='col']//a/@href").extract():
-            file1.write(sub_link+"\n")
-            yield response.follow(sub_link, callback=self.parse_l2)
+        for sel in response.xpath("//div[@class='col']//a"):
+            title = sel.xpath('text()').extract()[0]
+            sub_link = sel.xpath("@href").extract()[0]
+            yield response.follow(sub_link, callback=self.parse_l2, cb_kwargs={"title":title})
 
-            #if sub_link.endswith(self.paper_ending):
-            #    yield response.follow(sub_link, callback=self.parse_pdf)
-            #elif all([not sub_link.endswith(tp) for tp in self.ignore_endings]):
-            #    yield response.follow(sub_link, callback=self.parse)
-
-    def parse_l2(self, response):
+    def parse_l2(self, response, title):
         for subsublink in response.xpath("//div//a[contains(text(), 'Paper')]/@href").extract():
-            print("HIT")
             if subsublink.endswith(".pdf"):
-                print("HIT IN HERE")
-                yield response.follow(subsublink, callback=self.parse_pdf)
+                yield response.follow(subsublink, callback=self.parse_pdf, cb_kwargs={"title":title})
 
 
 # stats
 # without heuristics it took: 1m 51s
+# with heuristics it took: not much less
