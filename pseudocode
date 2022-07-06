@@ -1,0 +1,17 @@
+#user provides start url, keywords, archive directory,
+
+
+for each url:
+    if url ends with "pdf":
+        get link anchor text as the name.
+        check name against json file
+        if name in json file:
+            if keywords in json file:
+                if file not in archive directory:
+                    download file and put in archive directory
+
+        if name not in json file:
+            calculate keywords
+            add to json
+
+
