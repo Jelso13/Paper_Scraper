@@ -4,6 +4,10 @@ import shelve
 from contextlib import closing
 
 
+#from twisted.internet import reactor
+#from scrapy.crawler import CrawlerRunner
+
+
 
 
 
@@ -69,8 +73,31 @@ def test_pdf_checker():
     #spdr = Paper_Spider
     spdr = NeuripsSpider
     process = CrawlerProcess()
-    process.crawl(spdr, url_list=[no_rl_link], phrase_list=["reinforcement learning"])
+    process.crawl(spdr, url_list=["https://proceedings.neurips.cc/paper/1998"], phrase_list=["reinforcement learning"])
+    #process.crawl(spdr, url_list=[
+    #    "https://proceedings.neurips.cc/paper/1998",
+    #    "https://proceedings.neurips.cc/paper/1999",
+    #    "https://proceedings.neurips.cc/paper/2000",
+    #    "https://proceedings.neurips.cc/paper/2001",
+    #    "https://proceedings.neurips.cc/paper/2002",
+    #    "https://proceedings.neurips.cc/paper/2003",
+    #    "https://proceedings.neurips.cc/paper/2004",
+    #    ], phrase_list=["reinforcement learning"])
+
+
+    #process = CrawlerRunner()
+    #process.crawl(spdr, **{"url_list":["https://proceedings.neurips.cc/paper/1998"], "phrase_list":["reinforcement learning"]})
+    #process.crawl(spdr, **{"url_list":["https://proceedings.neurips.cc/paper/1999"], "phrase_list":["reinforcement learning"]})
+    #process.crawl(spdr, **{"url_list":["https://proceedings.neurips.cc/paper/2000"], "phrase_list":["reinforcement learning"]})
+    #process.crawl(spdr, **{"url_list":["https://proceedings.neurips.cc/paper/2001"], "phrase_list":["reinforcement learning"]})
+    #process.crawl(spdr, **{"url_list":["https://proceedings.neurips.cc/paper/2002"], "phrase_list":["reinforcement learning"]})
+    #process.crawl(spdr, **{"url_list":["https://proceedings.neurips.cc/paper/2003"], "phrase_list":["reinforcement learning"]})
+    #process.crawl(spdr, **{"url_list":["https://proceedings.neurips.cc/paper/2004"], "phrase_list":["reinforcement learning"]})
+    #deferred = process.join()
+    #deferred.addBoth(lambda _: reactor.stop())
+
     time_start = time.time()
+    #reactor.run()
     process.start()
     print("time taken = {:.2f} seconds".format(time.time()-time_start))
 
@@ -84,3 +111,7 @@ if __name__ == "__main__":
     #print("Time taken = {:.2f} seconds".format(time.time()-start))
     test_pdf_checker()
     #start_neurips_spider()
+
+    # Time taken for all links from 1998-2004:
+    #   seperate spiders takes:                     658 seconds
+    #   one spider multiple links takes             747 seconds

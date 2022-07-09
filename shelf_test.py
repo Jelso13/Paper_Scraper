@@ -3,19 +3,6 @@ import shelve
 import tqdm
 import time
 
-"""
-Example dictionary
-
-dict = {
-    title: {
-        keywords: [w1, w2, ...],
-        url: "https://...",
-        user_defined_tags: [t1, t2, t3], #overwrites the keyword query (paper includes rl but not rl paper)
-    }
-}
-
-
-"""
 # runs in 2.3125727 seconds
 def populate_dict():
     with closing(shelve.open('mydict.shelf', 'c')) as shelf:
@@ -36,6 +23,17 @@ def update_dict():
             "url": "https://testing.com"
         }
         shelf.close()
+        
+def update_partial_dict():
+    with closing(shelve.open('mydict.shelf')) as shelf:
+        #shelf["paper_with_name_400"]["keywords"].append("yute")
+        #shelf["paper_with_name_400"]["keywords"] = shelf["paper_with_name_400"]["keywords"] + ["yute"]
+        tmp = shelf["paper_with_name_400"]
+        tmp["keywords"].append("yute")
+        shelf["paper_with_name_400"] = tmp
+
+        shelf.close()
+
 
 # Runs in 0.052658 seconds
 def query_dict():
