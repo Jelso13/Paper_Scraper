@@ -25,7 +25,7 @@ def update_dict():
         shelf.close()
         
 def update_partial_dict():
-    with closing(shelve.open('mydict.shelf')) as shelf:
+    with closing(shelve.open('mydict.shelf'), "w") as shelf:
         #shelf["paper_with_name_400"]["keywords"].append("yute")
         #shelf["paper_with_name_400"]["keywords"] = shelf["paper_with_name_400"]["keywords"] + ["yute"]
         tmp = shelf["paper_with_name_400"]
