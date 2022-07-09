@@ -5,6 +5,8 @@ key_phrase parameter only searches first page of the pdf to reduce the chance of
 
 TODO
 - [ ] Create ICML class
+- [ ] Add a strict mode that only add keywords to the shelf when searched for.
+- [ ] Somehow sort issue with storing key phrases (reinforcement learning) as key words is too broad and current approach doesnt work for phrases
 - [ ] handle parameters and options that are passed to the program
 - [ ] Store paper information in shelving
 - [ ] store papers organised in some way only if not already downloaded
@@ -18,11 +20,4 @@ These are the old objectives *update this
 - [ ] Improve efficiency to pass over papers that are already collected
 
 # Arguments
-Example 1 shows providing the link argument to direct to a root url and a key phrase to search within pdfs
-```
-$ python3 scraper.py --link https://papers.nips.cc/paper/2015 --key_phrase "reinforcement learning"
-```
-Example 2 will collect all pdfs regardless of key phrase
-```
-$ python3 scraper.py --link https://papers.nips.cc/paper/2015
-```
+

@@ -73,16 +73,12 @@ def test_pdf_checker():
     #spdr = Paper_Spider
     spdr = NeuripsSpider
     process = CrawlerProcess()
-    process.crawl(spdr, url_list=["https://proceedings.neurips.cc/paper/1998"], phrase_list=["reinforcement learning"])
-    #process.crawl(spdr, url_list=[
-    #    "https://proceedings.neurips.cc/paper/1998",
-    #    "https://proceedings.neurips.cc/paper/1999",
-    #    "https://proceedings.neurips.cc/paper/2000",
-    #    "https://proceedings.neurips.cc/paper/2001",
-    #    "https://proceedings.neurips.cc/paper/2002",
-    #    "https://proceedings.neurips.cc/paper/2003",
-    #    "https://proceedings.neurips.cc/paper/2004",
-    #    ], phrase_list=["reinforcement learning"])
+    #process.crawl(spdr, url_list=["https://proceedings.neurips.cc/paper/1998"], phrase_list=["reinforcement learning"])
+    process.crawl(spdr, url_list=[
+        "https://proceedings.neurips.cc/paper/2019",
+        "https://proceedings.neurips.cc/paper/2020",
+        "https://proceedings.neurips.cc/paper/2021",
+        ], phrase_list=["reinforcement learning"])
 
 
     #process = CrawlerRunner()

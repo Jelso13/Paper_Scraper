@@ -51,6 +51,23 @@ shelf =
 
 """
 
+
+
+"""
+
+if paper not in shelf:
+    add to shelf
+
+if keywords in shelf[paper]:
+    download if not in directory
+
+if not downloaded:
+    check if keywords match
+    if keywords in paper:
+        download
+
+"""
+
 from pydoc import pager
 
 
@@ -72,7 +89,3 @@ for each url:
 # use this function with tqdm to give indication of how long left
 
 
-neurips:
-
-    change the xpath specifier to find only the links for each paper page 
-    

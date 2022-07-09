@@ -38,14 +38,14 @@ class Paper_Spider(scrapy.Spider):
     def parse_pdf(self, response, title=None, year=None):
         # max file length { mac = 255 chars, linux =  255, windows = 260 chars}
         #file1.write(title+"\n\t"+response.url+"\n")
-        print("title length = {}".format(len(title)))
+        #print("title length = {}".format(len(title)))
         #with open("papers/" + path, "wb") as f:
         #    f.write(response.body)
         if not title:
             title = "temp"
 
         paper_recorded = self.paper_on_shelf(year, title)
-        print("paper recorded = ", str(paper_recorded))
+        #print("paper recorded = ", str(paper_recorded))
 
         # Check shelf if what I'm looking for
         #   if desired then check if downloaded
@@ -56,35 +56,48 @@ class Paper_Spider(scrapy.Spider):
         #   process and add to shelf
 
 
-        file_name = title + ".pdf"
-        if paper_recorded:
-            ###
-            print("In Shelf")
+        if not paper_recorded:
+            # if the paper is not on the shelf
+            reader = PyPDF2.PdfFileReader(io.BytesIO(response.body))
+            doc_title = reader.getDocumentInfo().title
+            if title=="temp" and doc_title:
+                title = doc_title
+            else:
+                doc_title=""
 
-            return None
-
-        reader = PyPDF2.PdfFileReader(io.BytesIO(response.body))
-        doc_title = reader.getDocumentInfo().title
-        if title=="temp" and doc_title:
-            title = doc_title
-        else:
-            doc_title=""
-
-        text = u""
-        text += doc_title
-        for page in reader.pages:
-            text += page.extractText()
+            text = u""
+            text += doc_title.lower()
+            for page in reader.pages:
+                text += page.extractText().lower()
         
-        # find set of all words in pdf
-        key_words = re.findall(r'[a-zA-Z]\w+', text)
+            # find set of all words in pdf
+            key_words = re.findall(r'[a-zA-Z]\w+', text)
 
-        self.add_to_shelf(year, title, key_words, response.url)
+            self.add_to_shelf(year, title, key_words, response.url)
 
         #self.print_shelf(year)
-
-        if self.contains_keywords(text):
-            # download the paper
-            pass 
+        file_name = title.replace(" ", "_") + ".pdf"
+        directory = "/".join([self.directory, year])+"/"
+        file_location = directory+file_name
+        # if the file is not downloaded
+        if not os.path.exists(file_location):
+            # if the file contains desired keywords
+            with closing(shelve.open(self.shelf)) as shelf:
+                tmp = shelf[year]
+                # if it contains the correct keywords
+                #if self.contains_keywords(tmp[title]["keywords"]):
+                if self.contains_keywords(text):
+                    # download the file
+                    if not os.path.exists(os.path.dirname(directory)):
+                        try:
+                            os.makedirs(os.path.dirname(directory))
+                        except OSError as e:
+                            self.logger.info(
+                                "some thing I dont understand about a race condition?"
+                            )
+                    with open(file_location, "wb") as f:
+                        print("downloading ", file_location)
+                        f.write(response.body)
         return None
 
     def add_to_shelf(self, year, title, key_words, url):
@@ -94,8 +107,8 @@ class Paper_Spider(scrapy.Spider):
 
             tmp = shelf[str(year)]
             tmp[title] = {
-                #"keywords": key_words,
-                "keywords": [],
+                "keywords": key_words,
+                #"keywords": [],
                 "url": url,
                 "user_tags": []
             }
@@ -118,10 +131,15 @@ class Paper_Spider(scrapy.Spider):
                 return False
         return True
         
-    def contains_keywords(self, text):
+    def contains_keywords(self, text, phrase=True):
         for kw in self.key_phrases:
-            if kw in text:
-                return True
+            if phrase:
+                if kw in text:
+                    return True
+            else:
+                for word in kw.split(" "):
+                    if word in text:
+                        return True
 
 class NeuripsSpider(Paper_Spider):
     name = "NeuripsSpider"
