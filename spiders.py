@@ -37,6 +37,10 @@ class Paper_Spider(scrapy.Spider):
                 yield response.follow(sub_link, callback=self.parse)
 
     def parse_pdf(self, response, title=None, year=None):
+        #print("response size = ", int(response.headers['content-length']))
+        print("response type = ", type(response))
+        if int(response.headers['content-length']) > 33554432:
+            print(title, "is bigger than download warn")
         if not title:
             title = "temp"
         paper_recorded = self.paper_on_shelf(year, title)
@@ -55,8 +59,16 @@ class Paper_Spider(scrapy.Spider):
             text = u""
             text += doc_title.lower()
             for page in reader.pages:
-                text += page.extractText().lower()
+                #text += page.extractText().lower()
+                text += page.extractText()
         
+            #if text.count("References") > 1:
+            #    print("paper with more than one reference = {} with {} references".format(title, text.count("References")))
+            #if text.count("Bibliography") > 1:
+            #    print("USES BIBLIOGRAPHY")
+
+            # remove the references section - any text after last 'References'
+            text = text[:text.rfind("References")]
 
             if self.strict_mode:
                 key_words = []
@@ -66,7 +78,8 @@ class Paper_Spider(scrapy.Spider):
             self.add_to_shelf(year, title, key_words, response.url)
 
         #self.print_shelf(year)
-        file_name = title.replace(" ", "_") + ".pdf"
+        # Stupid filename requirements because windows sucks
+        file_name = title.replace(" ", "_").replace("/","_").replace(":","-") + ".pdf"
         directory = "/".join([self.directory, year])+"/"
         file_location = directory+file_name
         # if the file is not downloaded
@@ -88,7 +101,7 @@ class Paper_Spider(scrapy.Spider):
                             "some thing I dont understand about a race condition?"
                         )
                 with open(file_location, "wb") as f:
-                    print("downloading ", file_location)
+                    #print("downloading ", file_location)
                     f.write(response.body)
                 if self.strict_mode:
                     self.mod_shelf_keywords(year, title, keyword_check)
@@ -97,7 +110,7 @@ class Paper_Spider(scrapy.Spider):
     def mod_shelf_keywords(self, year, title, keywords):
         with closing(shelve.open(self.shelf, "w")) as shelf:
             tmp = shelf[year]
-            tmp[title]["keywords"].append(keywords)
+            tmp[title]["keywords"].append(keywords[0])
             shelf[year] = tmp
             shelf.close()
 
@@ -156,7 +169,9 @@ class NeuripsSpider(Paper_Spider):
         "DEPTH_LIMIT" : 3,
         "LOG_ENABLED" : False,
         "CONCURRENT_REQUESTS": 100,
-        "DOWNLOAD_TIMEOUT": 100,
+        "DOWNLOAD_TIMEOUT": 100000,
+        "download_maxsize": 0,
+        "DOWNLOAD_MAXSIZE": 0,
     }    
     
     #def __init__(self, **kwargs):

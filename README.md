@@ -6,7 +6,7 @@ key_phrase parameter only searches first page of the pdf to reduce the chance of
 TODO
 - [ ] Create ICML class
 - [ ] Issue with titles that contain / character
-- [ ] Strict mode keywords not working - many have empty array
+- [ ] Strict mode keywords not working - many have empty array and adds all keywords if one is found
 - [ ] Issue with File sizes being too large to download
 - [ ] Issue with collecting papers that include keyphrase in the references/bibliography
 - [X] Issue with getting title from metadata as some files dont have it.
